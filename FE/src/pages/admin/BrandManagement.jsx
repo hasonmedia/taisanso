@@ -465,37 +465,34 @@ export default function AssetCategoryManagement() {
 
                       {/* Thống kê tài sản */}
                       <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                        <div className="bg-blue-50 rounded p-2">
-                          <div className="text-lg font-bold text-blue-600">{category.statistics.total}</div>
-                          <div className="text-xs text-blue-700">Tổng số</div>
-                        </div>
+                        <button
+                          onClick={() => navigate(`/dashboard/quan-ly-danh-muc-tai-san/${category.id}`)}
+                          className="bg-blue-50 rounded p-2 hover:bg-blue-100 transition-colors cursor-pointer group"
+                        >
+                          <div className="text-lg font-bold text-blue-600 group-hover:text-blue-700">{category.statistics.total}</div>
+                          <div className="text-xs text-blue-700 group-hover:text-blue-800">Tổng số</div>
+                        </button>
 
-                        <div className="bg-orange-50 rounded p-2">
-                          <div className="text-lg font-bold text-orange-600">{category.statistics.expiringSoon}</div>
-                          <div className="text-xs text-orange-700">Sắp hết hạn</div>
-                        </div>
+                        <button
+                          onClick={() => navigate(`/dashboard/quan-ly-danh-muc-tai-san/${category.id}?status=expiring`)}
+                          className="bg-orange-50 rounded p-2 hover:bg-orange-100 transition-colors cursor-pointer group"
+                        >
+                          <div className="text-lg font-bold text-orange-600 group-hover:text-orange-700">{category.statistics.expiringSoon}</div>
+                          <div className="text-xs text-orange-700 group-hover:text-orange-800">Sắp hết hạn</div>
+                        </button>
 
-                        <div className="bg-red-50 rounded p-2">
-                          <div className="text-lg font-bold text-red-600">{category.statistics.expired}</div>
-                          <div className="text-xs text-red-700">Đã hết hạn</div>
-                        </div>
+                        <button
+                          onClick={() => navigate(`/dashboard/quan-ly-danh-muc-tai-san/${category.id}?status=expired`)}
+                          className="bg-red-50 rounded p-2 hover:bg-red-100 transition-colors cursor-pointer group"
+                        >
+                          <div className="text-lg font-bold text-red-600 group-hover:text-red-700">{category.statistics.expired}</div>
+                          <div className="text-xs text-red-700 group-hover:text-red-800">Đã hết hạn</div>
+                        </button>
                       </div>
                     </div>
 
                     {/* Card Content */}
                     <div className="p-4 space-y-3">
-                      {/* View Details Button */}
-                      <Button
-                        onClick={() => {
-                          navigate(`/dashboard/quan-ly-danh-muc-tai-san/${category.id}`);
-                        }}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                        size="sm"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Xem chi tiết ({category.statistics.total} tài sản)
-                      </Button>
-
                       {/* Action Buttons */}
                       <div className="flex gap-2 pt-2 border-t border-gray-100">
                         <Button
