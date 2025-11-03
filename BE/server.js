@@ -14,8 +14,8 @@ const app = express();
 
 // CORS options
 const corsOptions = {
-  origin: "http://localhost:5173",
-  // origin: "https://taisanso-fe.yuemtc.easypanel.host/",
+  // origin: "http://localhost:5173",
+  origin: "https://taisanso.work999.com/",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
 };
