@@ -1,12 +1,9 @@
 import axiosConfig from "@/axiosConfig";
 
-export const getSuppliers = async (filter) => {
+export const getSuppliers = async () => {
   return await axiosConfig({
     method: "get",
     url: "/admin/nha_cung_cap",
-    params: {
-      "danhmucIds[]": filter,
-    },
   });
 };
 

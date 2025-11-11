@@ -7,8 +7,7 @@ const {
 
 const getNhaCungCapController = async (req, res) => {
   try {
-    const idArray = req.query["danhmucIds[]"];
-    const results = await getNhaCungCap(idArray);
+    const results = await getNhaCungCap();
     res.status(200).json(results);
   } catch (error) {
     res.status(500).json({ error: error.message });

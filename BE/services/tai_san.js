@@ -42,9 +42,7 @@ const getTaiSan = async (data, user) => {
     SELECT 
         ts.*,
         danhMucTaiSan.id AS danh_muc_tai_san_id,
-        danhMucTaiSan.ten AS danh_muc_tai_san_ten,
-        danhMucTaiSan.lien_he AS danh_muc_tai_san_lien_he,
-        danhMucTaiSan.link AS danh_muc_tai_san_link,
+        danhMucTaiSan.ghi_chu AS ghi_chu,
         ncc.id AS nha_cung_cap_id,
         ncc.ten AS ten_nha_cung_cap,
         ncc.sodienthoai AS lien_he_nha_cung_cap,
@@ -137,9 +135,7 @@ const getTaiSanSapHetHan = async (user) => {
   const sql = `SELECT 
                     ts.*,
                     danhMucTaiSan.id AS danh_muc_tai_san_id,
-                    danhMucTaiSan.ten AS danh_muc_tai_san_ten,
-                    danhMucTaiSan.lien_he AS danh_muc_tai_san_lien_he,
-                    danhMucTaiSan.link AS danh_muc_tai_san_link,
+                    danhMucTaiSan.ghi_chu AS ghi_chu,
                     ncc.id AS nha_cung_cap_id,
                     ncc.ten AS ten_nha_cung_cap,
                     lts.id AS loai_tai_san_id,

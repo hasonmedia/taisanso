@@ -7,9 +7,9 @@ import {
 import { create } from "zustand";
 export const SupplierStore = create((set) => ({
   data: [],
-  getSuppliers: async (filter = []) => {
+  getSuppliers: async () => {
     try {
-      const response = await getSuppliers(filter);
+      const response = await getSuppliers();
       set({ data: response });
       return response;
     } catch (error) {

@@ -13,7 +13,6 @@ export const LoaiTaiSanStore = create((set) => ({
   getAllLoaiTaiSan: async (params = {}) => {
     try {
       const response = await apiGetAll(params);
-      // response.data có thể chứa {data: [...], meta: {...}} hoặc chỉ mảng
       set({ data: response.data });
       return response.data;
     } catch (error) {

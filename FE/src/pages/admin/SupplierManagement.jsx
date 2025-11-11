@@ -35,19 +35,6 @@ export default function SupplierManagement() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                await getSuppliers(selectedCategoryFilters);
-            } catch (err) {
-                console.error("Failed to fetch suppliers:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [selectedCategoryFilters]);
-
     const toggleSupplier = (categoryId) => {
         setSelectedCategoryFilters((prevIds) => {
             if (prevIds.includes(categoryId)) {

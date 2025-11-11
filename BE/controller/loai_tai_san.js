@@ -7,13 +7,13 @@ const {
 // Lấy danh sách loại tài sản với phân trang
 const getLoaiTaiSanController = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search, nhaCungCapId } = req.query;
+    const { page = 1, limit = 10, search, danhMucTaiSanId } = req.query;
 
     const result = await getLoaiTaiSanService({
       page: parseInt(page),
       limit: parseInt(limit),
       search,
-      nhaCungCapId: nhaCungCapId ? parseInt(nhaCungCapId) : null,
+      danhMucTaiSanId: danhMucTaiSanId ? parseInt(danhMucTaiSanId) : null,
     });
     res.status(200).json({
       success: true,

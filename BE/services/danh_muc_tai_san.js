@@ -4,7 +4,6 @@ const { NhaCungCap } = require("../model/nha_cung_cap");
 const { LoaiTaiSan } = require("../model/loai_tai_san");
 const { sequelize } = require("../config/database");
 const { TaiSan } = require("../model/tai_san");
-//chưa sửa
 const getDanhMucTaiSan = async (data, user) => {
   let filter = ``;
 

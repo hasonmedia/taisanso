@@ -5,10 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { AssetStore } from "../../stores/asset";
 import { LoaiTaiSanStore } from "../../stores/loaiTaiSan";
-import SupplierSelect from "../../components/SupplierSelect";
-
+import DepartmentSelect from "../../components/DepartmentSelect";
 export default function AssetTypeManagement() {
     const { data: loaiTaiSans, getAllLoaiTaiSan, createLoaiTaiSan, updateLoaiTaiSan, deleteLoaiTaiSan } = LoaiTaiSanStore();
     const [loading, setLoading] = useState(true);
@@ -173,7 +171,7 @@ export default function AssetTypeManagement() {
                                     >
                                         {loaiTaiSan.ten}
                                     </h3>
-                                    <p className="text-sm font-bold text-blue-600 group-hover:text-blue-700">{loaiTaiSan.nhaCungCaps.length} nhà cung cấp</p>
+                                    <p className="text-sm font-bold text-blue-600 group-hover:text-blue-700">{loaiTaiSan.nhaCungCaps?.length} nhà cung cấp</p>
                                 </div>
 
                                 <div className="p-4 space-y-3">
@@ -236,11 +234,11 @@ export default function AssetTypeManagement() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-sm font-medium">Nhà cung cấp</Label>
-                                <SupplierSelect
+                                <Label className="text-sm font-medium">Danh mục tài sản</Label>
+                                <DepartmentSelect
                                     value={selectedSupplier}
                                     onValueChange={setSelectedSupplier}
-                                    placeholder="Chọn nhà cung cấp (tùy chọn)"
+                                    placeholder="Chọn danh mục tài sản"
                                 />
                             </div>
 
@@ -284,11 +282,11 @@ export default function AssetTypeManagement() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-sm font-medium">Nhà cung cấp</Label>
-                                <SupplierSelect
+                                <Label className="text-sm font-medium">Danh mục tài sản</Label>
+                                <DepartmentSelect
                                     value={editSelectedSupplier}
                                     onValueChange={setEditSelectedSupplier}
-                                    placeholder="Chọn nhà cung cấp (tùy chọn)"
+                                    placeholder="Chọn danh mục tài sản"
                                 />
                             </div>
 
@@ -327,15 +325,15 @@ export default function AssetTypeManagement() {
                                 Tài sản thuộc loại: {selectedLoaiTaiSan.ten}
                             </DialogTitle>
                             <p className="text-sm text-gray-600 mt-1">
-                                {selectedLoaiTaiSan.nhaCungCaps && selectedLoaiTaiSan.nhaCungCaps.length > 0
-                                    ? `Tìm thấy tài sản từ ${selectedLoaiTaiSan.nhaCungCaps.length} nhà cung cấp`
+                                {selectedLoaiTaiSan.nhaCungCaps && selectedLoaiTaiSan.nhaCungCaps?.length > 0
+                                    ? `Tìm thấy tài sản từ ${selectedLoaiTaiSan.nhaCungCaps?.length} nhà cung cấp`
                                     : "Chưa có tài sản nào thuộc loại này"
                                 }
                             </p>
                         </DialogHeader>
 
                         <div className="space-y-4 max-h-96 overflow-y-auto">
-                            {!selectedLoaiTaiSan.nhaCungCaps || selectedLoaiTaiSan.nhaCungCaps.length === 0 ? (
+                            {!selectedLoaiTaiSan.nhaCungCaps || selectedLoaiTaiSan.nhaCungCaps?.length === 0 ? (
                                 <div className="text-center py-8">
                                     <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                                     <h3 className="text-lg font-medium text-gray-900 mb-2">

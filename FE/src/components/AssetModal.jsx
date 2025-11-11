@@ -125,6 +125,8 @@ export default function AssetModal({ dataCategory, setIsModalOpen }) {
                 setCategorySelected(String(value));
                 const cat = dataCategory.find((c) => String(c.id) === String(value));
                 setSelectedCategory(cat || null);
+                // Reset loại tài sản khi danh mục thay đổi
+                setLoaiTaiSanSelected("");
               }}
               placeholder="Chọn danh mục tài sản"
             />
@@ -208,7 +210,8 @@ export default function AssetModal({ dataCategory, setIsModalOpen }) {
             <LoaiTaiSanSelect
               value={loaiTaiSanSelected}
               onValueChange={setLoaiTaiSanSelected}
-              placeholder="Chọn loại tài sản"
+              placeholder={categorySelected ? "Chọn loại tài sản" : "Vui lòng chọn danh mục trước"}
+              categoryId={categorySelected}
             />
           </div>
 

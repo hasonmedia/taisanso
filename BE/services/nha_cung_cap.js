@@ -1,25 +1,9 @@
 const { NhaCungCap } = require("../model/nha_cung_cap");
 const { TaiSan } = require("../model/tai_san");
 const { Op } = require("sequelize");
-const getNhaCungCap = async (danhmucIds = []) => {
-  if (!Array.isArray(danhmucIds)) {
-    danhmucIds = [danhmucIds];
-  }
-  const taiSanInclude = {
-    model: TaiSan,
-    required: false,
-  };
-  if (Array.isArray(danhmucIds) && danhmucIds.length > 0) {
-    taiSanInclude.where = {
-      danh_muc_tai_san_id: { [Op.in]: danhmucIds },
-    };
-    taiSanInclude.required = true;
-  }
-  const options = {
-    include: [taiSanInclude],
-    distinct: true,
-  };
-  const nhaCungCaps = await NhaCungCap.findAll(options);
+const getNhaCungCap = async () => {
+  const nhaCungCaps = await NhaCungCap.findAll();
+
   return nhaCungCaps.map((item) => item.get({ plain: true }));
 };
 const addNhaCungCap = async (data) => {
