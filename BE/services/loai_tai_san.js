@@ -7,7 +7,7 @@ const getLoaiTaiSanService = async ({
   page = 1,
   limit = 10,
   search,
-  danhMucTaiSanId, // <-- Đã thay đổi
+  danhMucTaiSanId,
 }) => {
   try {
     const offset = (page - 1) * limit;
@@ -19,7 +19,7 @@ const getLoaiTaiSanService = async ({
       };
     }
     if (danhMucTaiSanId) {
-      whereClause.danh_muc_tai_san_id = danhMucTaiSanId; // <-- Đã thêm
+      whereClause.DanhMucTaiSanId = danhMucTaiSanId; // <-- Sử dụng tên đúng
     }
 
     // 3. Lấy dữ liệu và đếm
@@ -78,23 +78,22 @@ const getLoaiTaiSanService = async ({
 
 const addLoaiTaiSanService = async ({ ten, danhMucTaiSanId }) => {
   try {
-    // Kiểm tra nhà cung cấp có tồn tại không
     const danh_muc_tai_san = await DanhMucTaiSan.findByPk(danhMucTaiSanId);
     if (!danh_muc_tai_san) {
-      throw new Error("Nhà cung cấp không tồn tại");
+      throw new Error("Danh mục tài sản không tồn tại");
     }
 
     const loaiTaiSan = await LoaiTaiSan.create({
       ten: ten.trim(),
-      danhMucTaiSanId: danhMucTaiSanId,
+      DanhMucTaiSanId: danhMucTaiSanId,
     });
 
-    // Trả về kèm thông tin nhà cung cấp
+    // Trả về kèm thông tin danh mục tài sản
     return await LoaiTaiSan.findByPk(loaiTaiSan.id, {
       include: [
         {
           model: DanhMucTaiSan,
-          attributes: ["id", "ghi_chu"],
+          attributes: ["id", "ten", "ghi_chu"],
         },
       ],
     });
@@ -114,23 +113,23 @@ const updateLoaiTaiSanService = async (id, { ten, danhMucTaiSanId }) => {
 
     const updateData = { ten: ten.trim() };
 
-    // Nếu có cập nhật nhà cung cấp, kiểm tra tồn tại
+    // Nếu có cập nhật danh mục tài sản, kiểm tra tồn tại
     if (danhMucTaiSanId) {
       const danhmucts = await DanhMucTaiSan.findByPk(danhMucTaiSanId);
       if (!danhmucts) {
-        throw new Error("Nhà cung cấp không tồn tại");
+        throw new Error("Danh mục tài sản không tồn tại");
       }
-      updateData.danhMucTaiSanId = danhMucTaiSanId;
+      updateData.DanhMucTaiSanId = danhMucTaiSanId;
     }
 
     await loaiTaiSan.update(updateData);
 
-    // Trả về kèm thông tin nhà cung cấp
+    // Trả về kèm thông tin danh mục tài sản
     return await LoaiTaiSan.findByPk(id, {
       include: [
         {
           model: DanhMucTaiSan,
-          attributes: ["id", "ghi_chu"],
+          attributes: ["id", "ten", "ghi_chu"],
         },
       ],
     });

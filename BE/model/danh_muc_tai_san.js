@@ -9,7 +9,7 @@ const DanhMucTaiSan = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    ghi_chu: DataTypes.STRING(255),
+    ghi_chu: DataTypes.TEXT,
   },
   {
     tableName: "danh_muc_tai_san",

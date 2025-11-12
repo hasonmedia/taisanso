@@ -14,13 +14,32 @@ const getTaiSan = async (data, user) => {
   let filter = ``;
   let DanhMucTaiSan1 = null;
 
+  // Filter by category
   if (data.idDanhMucTaiSan) {
     DanhMucTaiSan1 = await DanhMucTaiSan.findByPk(data.idDanhMucTaiSan);
     filter = `WHERE ts.danh_muc_tai_san_id = ${data.idDanhMucTaiSan}`;
   }
+
+  // Filter by asset type
+  if (data.idLoaiTaiSan) {
+    const loaiTaiSanCondition = `ts.loai_tai_san_id = ${data.idLoaiTaiSan}`;
+    filter += filter
+      ? ` AND ${loaiTaiSanCondition}`
+      : `WHERE ${loaiTaiSanCondition}`;
+  }
+
+  // Filter by supplier
+  if (data.idNhaCungCap) {
+    const nhaCungCapCondition = `ts.nha_cung_cap_id = ${data.idNhaCungCap}`;
+    filter += filter
+      ? ` AND ${nhaCungCapCondition}`
+      : `WHERE ${nhaCungCapCondition}`;
+  }
+
+  // Search filter
   if (search) {
     const searchCondition = `
-      (ts.ten_tai_san ILIKE '%${search}%')
+      (ts.ten_tai_san ILIKE '%${search}%' OR ncc.ten ILIKE '%${search}%' OR lts.ten ILIKE '%${search}%')
     `;
     filter += filter ? ` AND ${searchCondition}` : `WHERE ${searchCondition}`;
   }
@@ -48,6 +67,7 @@ const getTaiSan = async (data, user) => {
         ncc.sodienthoai AS lien_he_nha_cung_cap,
         ncc.lienhe AS lien_he,
         ncc.website AS website,
+        ncc.ghi_chu AS ghi_chu_nha_cung_cap,
         lts.id AS loai_tai_san_id,
         lts.ten AS loai_tai_san_ten
     FROM 
@@ -67,8 +87,23 @@ const getTaiSan = async (data, user) => {
   });
 
   let moTaHanhDong = "Lấy danh sách tài sản";
+  let filters = [];
+
   if (data.idDanhMucTaiSan && DanhMucTaiSan1) {
-    moTaHanhDong += ` theo danh mục: ${DanhMucTaiSan1.ten}`;
+    filters.push(`danh mục: ${DanhMucTaiSan1.ten}`);
+  }
+  if (data.idLoaiTaiSan) {
+    filters.push(`loại tài sản ID: ${data.idLoaiTaiSan}`);
+  }
+  if (data.idNhaCungCap) {
+    filters.push(`nhà cung cấp ID: ${data.idNhaCungCap}`);
+  }
+  if (search) {
+    filters.push(`tìm kiếm: "${search}"`);
+  }
+
+  if (filters.length > 0) {
+    moTaHanhDong += ` với bộ lọc: ${filters.join(", ")}`;
   }
 
   await ChiTietHanhDong.create({
@@ -282,7 +317,7 @@ const getTaiSanDetailsService = async (nhaCungCapIds = []) => {
         required: false,
       },
     ],
-    required: true,
+    required: false,
   };
 
   try {
@@ -290,6 +325,7 @@ const getTaiSanDetailsService = async (nhaCungCapIds = []) => {
       attributes: [
         "id",
         "ten",
+        "ghi_chu",
         [sequelize.literal(hetHanSubQuery), "so_luong_het_han"],
         [sequelize.literal(sapHetHanSubQuery), "so_luong_sap_het_han"],
       ],
@@ -299,7 +335,7 @@ const getTaiSanDetailsService = async (nhaCungCapIds = []) => {
       replacements,
     });
 
-    return results.filter((dm) => dm.TaiSans && dm.TaiSans.length > 0);
+    return results;
   } catch (error) {
     console.error("Lỗi khi lấy tài sản theo nhóm (có đếm):", error);
     throw error;

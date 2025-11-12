@@ -3,13 +3,13 @@ import {
   themNhaCungCap,
   suaNhaCungCap,
   xoaNhaCungCap,
-} from "@/apis/supplier";
+} from "../apis/supplier";
 import { create } from "zustand";
 export const SupplierStore = create((set) => ({
   data: [],
-  getSuppliers: async () => {
+  getSuppliers: async (filter = []) => {
     try {
-      const response = await getSuppliers();
+      const response = await getSuppliers(filter);
       set({ data: response });
       return response;
     } catch (error) {
@@ -19,12 +19,16 @@ export const SupplierStore = create((set) => ({
   themNhaCungCap: async (data) => {
     try {
       const response = await themNhaCungCap(data);
+      if (response.success === false) {
+        throw new Error(response.message);
+      }
       set((state) => ({
         data: [...state.data, response],
       }));
       return response;
     } catch (error) {
       console.log(error);
+      throw error; // Re-throw để component có thể catch
     }
   },
   suaNhaCungCap: async (id, data) => {
@@ -36,6 +40,7 @@ export const SupplierStore = create((set) => ({
       return response;
     } catch (error) {
       console.log(error);
+      throw error; // Re-throw để component có thể catch
     }
   },
 
@@ -47,6 +52,7 @@ export const SupplierStore = create((set) => ({
       }));
     } catch (error) {
       console.log(error);
+      throw error; // Re-throw để component có thể catch
     }
   },
 }));

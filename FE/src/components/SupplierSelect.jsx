@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { SupplierStore } from '@/stores/supplier';
+import { SupplierStore } from '../stores/supplier';
 
 const SupplierSelect = ({ value, onValueChange, placeholder = "Chọn nhà cung cấp", danhMucId = null }) => {
     const [loading, setLoading] = useState(false);

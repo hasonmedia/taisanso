@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { LoaiTaiSanStore } from '@/stores/loaiTaiSan';
+import { LoaiTaiSanStore } from '../stores/loaiTaiSan';
 const LoaiTaiSanSelect = ({ value, onValueChange, placeholder = "Chọn loại tài sản", categoryId = null }) => {
     const [loading, setLoading] = useState(false);
     const { data: loaiTaiSans, getAllLoaiTaiSan } = LoaiTaiSanStore();
@@ -11,7 +11,7 @@ const LoaiTaiSanSelect = ({ value, onValueChange, placeholder = "Chọn loại t
             try {
                 if (categoryId) {
                     // Lọc theo danh mục tài sản
-                    await getAllLoaiTaiSan({ DanhMucTaiSanId: categoryId });
+                    await getAllLoaiTaiSan({ danhMucTaiSanId: categoryId });
                 } else {
                     // Lấy tất cả loại tài sản
                     await getAllLoaiTaiSan();
