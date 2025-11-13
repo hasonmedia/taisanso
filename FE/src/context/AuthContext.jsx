@@ -1,0 +1,81 @@
+import { createContext, useContext, useState, useEffect } from "react";
+import axiosCofig from "../axiosConfig";
+import { logout as logoutService } from "../apis/auth";
+
+const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // start true
+  const [error, setError] = useState(null);
+  const fetchUser = async () => {
+    try {
+      const res = await axiosCofig.get("/admin/me");
+      setUser(res.user);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+
+    fetchUser();
+  }, []);
+  const login = async (credentials) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // BE trả 200: thành công
+      const data = await axiosCofig.post("/auth/login", credentials);
+      setUser(data.user);
+      return data;
+    } catch (err) {
+      // BE trả 404, 403... axios tự động ném lỗi
+      // err.response.data.message sẽ là "Không tìm thấy email", "Sai mật khẩu", v.v.
+      setError(err.response?.data?.message || "Đăng nhập thất bại");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+  // const login = async (credentials) => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const data = await axiosCofig.post("/auth/login", credentials);
+  //     if (data.success == false) {
+  //       throw new Error(data.message || "Đăng nhập thất bại");
+  //     }
+  //     setUser(data.user);
+  //     return data;
+  //   } catch (err) {
+  //     setError(err.response?.data?.message || err.message || "Đăng nhập thất bạii");
+  //     throw err;
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleLogout = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await logoutService();
+      setUser(null);
+    } catch (err) {
+      setError(err.response?.data || err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, setUser, loading, error, login, handleLogout, fetchUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(AuthContext);
