@@ -22,6 +22,8 @@ export default function AssetModal({ setIsModalOpen }) {
     { key: "Màu sắc", value: "Đỏ" },
     { key: "Kích thước", value: "L" },
   ]);
+  const [errors, setErrors] = useState({});
+  const [tenTaiSan, setTenTaiSan] = useState("");
   useEffect(() => {
     const fetchSuppliers = async () => {
       const suppliers = await getSuppliers();
@@ -47,18 +49,40 @@ export default function AssetModal({ setIsModalOpen }) {
     setCustomFields(newFields);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const customData = {};
-    if (!categorySelected) {
-      alert("Vui lòng chọn Danh mục tài sản!");
-      return; // Dừng hàm
+  const validateForm = () => {
+    const newErrors = {};
+
+    const requiredFields = [
+      { field: "tenTaiSan", value: tenTaiSan, message: "Tên tài sản không được để trống" },
+      { field: "categorySelected", value: categorySelected, message: "Vui lòng chọn danh mục tài sản" },
+      { field: "supplierSelected", value: supplierSelected, message: "Vui lòng chọn nhà cung cấp" },
+      { field: "ngayDangKy", value: ngayDangKy, message: "Ngày đăng ký không được để trống" },
+      { field: "ngayHetHan", value: ngayHetHan, message: "Ngày hết hạn không được để trống" },
+    ];
+
+    requiredFields.forEach(({ field, value, message }) => {
+      if (!value || (typeof value === "string" && !value.trim())) {
+        newErrors[field] = message;
+      }
+    });
+
+    // Kiểm tra ngày hết hạn phải sau ngày đăng ký
+    if (ngayDangKy && ngayHetHan && new Date(ngayHetHan) <= new Date(ngayDangKy)) {
+      newErrors.ngayHetHan = "Ngày hết hạn phải sau ngày đăng ký";
     }
 
-    if (!supplierSelected) {
-      alert("Vui lòng chọn Nhà cung cấp!");
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
       return;
     }
+
+    const customData = {};
     customFields.forEach(({ key, value }) => {
       if (key.trim()) customData[key] = value;
     });
@@ -70,7 +94,7 @@ export default function AssetModal({ setIsModalOpen }) {
       finalSupplier = `${supplierSource} - ${supplierType} - ${supplierName}`;
     }
     const payload = {
-      ten_tai_san: e.target.name.value,
+      ten_tai_san: tenTaiSan,
       NhaCungCapId: finalSupplier,
       LoaiTaiSanId: loaiTaiSanSelected === "" ? null : loaiTaiSanSelected,
       thong_tin: customData,
@@ -117,12 +141,22 @@ export default function AssetModal({ setIsModalOpen }) {
               name="name"
               type="text"
               placeholder="Nhập tên tài sản"
-              className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 
+              value={tenTaiSan}
+              onChange={(e) => {
+                setTenTaiSan(e.target.value);
+                if (errors.tenTaiSan) {
+                  setErrors(prev => ({ ...prev, tenTaiSan: "" }));
+                }
+              }}
+              className={`w-full border rounded-lg p-2 sm:p-3 
                          text-sm sm:text-base
                          focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
-                         focus:outline-none transition-colors"
-              required
+                         focus:outline-none transition-colors
+                         ${errors.tenTaiSan ? 'border-red-500' : 'border-gray-300'}`}
             />
+            {errors.tenTaiSan && (
+              <p className="text-red-500 text-sm mt-1">{errors.tenTaiSan}</p>
+            )}
           </div>
 
           {/* Danh mục */}
@@ -138,9 +172,16 @@ export default function AssetModal({ setIsModalOpen }) {
                 setSelectedCategory(cat || null);
                 // Reset loại tài sản khi danh mục thay đổi
                 setLoaiTaiSanSelected("");
+                // Clear error when user selects
+                if (errors.categorySelected) {
+                  setErrors(prev => ({ ...prev, categorySelected: "" }));
+                }
               }}
               placeholder="Chọn danh mục tài sản"
             />
+            {errors.categorySelected && (
+              <p className="text-red-500 text-sm mt-1">{errors.categorySelected}</p>
+            )}
           </div>
 
           {/* Loại tài sản */}
@@ -162,10 +203,19 @@ export default function AssetModal({ setIsModalOpen }) {
             </label>
             <SupplierSelect
               value={supplierSelected}
-              onValueChange={setSupplierSelected}
+              onValueChange={(value) => {
+                setSupplierSelected(value);
+                // Clear error when user selects
+                if (errors.supplierSelected) {
+                  setErrors(prev => ({ ...prev, supplierSelected: "" }));
+                }
+              }}
               placeholder="Chọn nhà cung cấp"
               danhMucId={categorySelected}
             />
+            {errors.supplierSelected && (
+              <p className="text-red-500 text-sm mt-1">{errors.supplierSelected}</p>
+            )}
           </div>
           {/* Ngày đăng ký và ngày hết hạn */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -177,13 +227,21 @@ export default function AssetModal({ setIsModalOpen }) {
                 name="ngay_dang_ky"
                 type="date"
                 value={ngayDangKy}
-                onChange={e => setNgayDangKy(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 
+                onChange={e => {
+                  setNgayDangKy(e.target.value);
+                  if (errors.ngayDangKy) {
+                    setErrors(prev => ({ ...prev, ngayDangKy: "" }));
+                  }
+                }}
+                className={`w-full border rounded-lg p-2 sm:p-3 
                            text-sm sm:text-base
                            focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
-                           focus:outline-none transition-colors"
-                required
+                           focus:outline-none transition-colors
+                           ${errors.ngayDangKy ? 'border-red-500' : 'border-gray-300'}`}
               />
+              {errors.ngayDangKy && (
+                <p className="text-red-500 text-sm mt-1">{errors.ngayDangKy}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
@@ -193,13 +251,21 @@ export default function AssetModal({ setIsModalOpen }) {
                 name="ngay_het_han"
                 type="date"
                 value={ngayHetHan}
-                onChange={e => setNgayHetHan(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-2 sm:p-3 
+                onChange={e => {
+                  setNgayHetHan(e.target.value);
+                  if (errors.ngayHetHan) {
+                    setErrors(prev => ({ ...prev, ngayHetHan: "" }));
+                  }
+                }}
+                className={`w-full border rounded-lg p-2 sm:p-3 
                            text-sm sm:text-base
                            focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
-                           focus:outline-none transition-colors"
-                required
+                           focus:outline-none transition-colors
+                           ${errors.ngayHetHan ? 'border-red-500' : 'border-gray-300'}`}
               />
+              {errors.ngayHetHan && (
+                <p className="text-red-500 text-sm mt-1">{errors.ngayHetHan}</p>
+              )}
             </div>
           </div>
 
