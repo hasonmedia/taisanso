@@ -50,6 +50,15 @@ export default function AssetModal({ setIsModalOpen }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const customData = {};
+    if (!categorySelected) {
+      alert("Vui lòng chọn Danh mục tài sản!");
+      return; // Dừng hàm
+    }
+
+    if (!supplierSelected) {
+      alert("Vui lòng chọn Nhà cung cấp!");
+      return;
+    }
     customFields.forEach(({ key, value }) => {
       if (key.trim()) customData[key] = value;
     });
@@ -60,11 +69,10 @@ export default function AssetModal({ setIsModalOpen }) {
       const supplierName = e.target.supplier?.value.trim() || "";
       finalSupplier = `${supplierSource} - ${supplierType} - ${supplierName}`;
     }
-
     const payload = {
       ten_tai_san: e.target.name.value,
       NhaCungCapId: finalSupplier,
-      LoaiTaiSanId: loaiTaiSanSelected,
+      LoaiTaiSanId: loaiTaiSanSelected === "" ? null : loaiTaiSanSelected,
       thong_tin: customData,
       tong_so_luong: 1,
       DanhMucTaiSanId: categorySelected,
@@ -103,7 +111,7 @@ export default function AssetModal({ setIsModalOpen }) {
           {/* Tên tài sản */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-              Tên tài sản:
+              Tên tài sản<span className="text-red-500">*</span>
             </label>
             <input
               name="name"
@@ -113,13 +121,14 @@ export default function AssetModal({ setIsModalOpen }) {
                          text-sm sm:text-base
                          focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
                          focus:outline-none transition-colors"
+              required
             />
           </div>
 
           {/* Danh mục */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-              Chọn danh mục:
+              Chọn danh mục<span className="text-red-500">*</span>
             </label>
             <AssetCategorySelectNew
               value={categorySelected}
@@ -137,7 +146,7 @@ export default function AssetModal({ setIsModalOpen }) {
           {/* Loại tài sản */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-              Loại tài sản:
+              Loại tài sản
             </label>
             <LoaiTaiSanSelect
               value={loaiTaiSanSelected}
@@ -149,7 +158,7 @@ export default function AssetModal({ setIsModalOpen }) {
           {/* Nhà cung cấp */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-              Nhà cung cấp:
+              Nhà cung cấp<span className="text-red-500">*</span>
             </label>
             <SupplierSelect
               value={supplierSelected}
@@ -162,7 +171,7 @@ export default function AssetModal({ setIsModalOpen }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-                Ngày đăng ký:
+                Ngày đăng ký<span className="text-red-500">*</span>
               </label>
               <input
                 name="ngay_dang_ky"
@@ -173,11 +182,12 @@ export default function AssetModal({ setIsModalOpen }) {
                            text-sm sm:text-base
                            focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
                            focus:outline-none transition-colors"
+                required
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-                Ngày hết hạn:
+                Ngày hết hạn<span className="text-red-500">*</span>
               </label>
               <input
                 name="ngay_het_han"
@@ -188,6 +198,7 @@ export default function AssetModal({ setIsModalOpen }) {
                            text-sm sm:text-base
                            focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
                            focus:outline-none transition-colors"
+                required
               />
             </div>
           </div>
