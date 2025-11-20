@@ -1905,5 +1905,10 @@ adminRouter.post("/thong_bao", authentication, requireRole(2), addThongBao);
  *         description: Không tìm thấy thông tin user
  */
 adminRouter.get("/me", authentication, requireRole([0, 1, 2, 3]), getMe);
-
+adminRouter.get(
+  "/gui-mail-tai-san",
+  authentication,
+  requireRole(1),
+  mailThongBaoTaiSanHetHanController
+);
 module.exports = adminRouter;
