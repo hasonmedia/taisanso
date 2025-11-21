@@ -294,7 +294,7 @@ export default function AssetManager() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-4 space-y-6">
+      <div className="max-w-full mx-auto p-4 space-y-6">
         <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -472,21 +472,32 @@ export default function AssetManager() {
                 <Table className="min-w-full table-fixed">
                   <TableHeader className="bg-gradient-to-r from-blue-50 to-blue-100">
                     <TableRow>
-                      <TableHead className="text-left font-semibold text-gray-700 px-4 py-4 w-[20%]">
+                      {/* TÀI SẢN: 25% */}
+                      <TableHead className="text-left font-semibold text-gray-700 px-4 py-4 w-[25%]">
                         TÀI SẢN
                       </TableHead>
-                      <TableHead className="text-center font-semibold text-gray-700 px-4 py-4 w-[10%]">
+
+                      {/* DANH MỤC: 15% */}
+                      <TableHead className="text-center font-semibold text-gray-700 px-4 py-4 w-[15%]">
                         DANH MỤC
                       </TableHead>
+
+                      {/* THÔNG TIN: 30% */}
                       <TableHead className="text-left font-semibold text-gray-700 px-4 py-4 w-[30%]">
                         THÔNG TIN
                       </TableHead>
-                      <TableHead className="text-center font-semibold text-gray-700 px-4 py-4 w-[15%]">
+
+                      {/* NGÀY ĐĂNG KÝ: 10% */}
+                      <TableHead className="text-center font-semibold text-gray-700 px-4 py-4 w-[10%]">
                         NGÀY ĐĂNG KÝ
                       </TableHead>
-                      <TableHead className="text-center font-semibold text-gray-700 px-4 py-4 w-[15%]">
+
+                      {/* NGÀY HẾT HẠN: 10% */}
+                      <TableHead className="text-center font-semibold text-gray-700 px-4 py-4 w-[10%]">
                         NGÀY HẾT HẠN
                       </TableHead>
+
+                      {/* THAO TÁC: 10% */}
                       <TableHead className="text-center font-semibold text-gray-700 px-4 py-4 w-[10%]">
                         THAO TÁC
                       </TableHead>
@@ -499,21 +510,26 @@ export default function AssetManager() {
                         className={`hover:bg-blue-50 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-gray-50"
                           }`}
                       >
-                        <TableCell className="px-4 py-4 w-[20%]">
-                          <div className="font-medium text-gray-900 text-sm line-clamp-2 break-words">
+                        {/* START - TÀI SẢN - 25% (Mở rộng và giữ break-words) */}
+                        <TableCell className="px-4 py-4 w-[25%] align-top">
+                          <div className="font-medium text-gray-900 text-sm break-words">
                             {item.ten_tai_san}
                           </div>
                           <div className="text-sm text-gray-500 truncate">
                             {item.ten_nha_cung_cap}
                           </div>
                         </TableCell>
-                        <TableCell className="text-center px-4 py-4 w-[10%] align-top">
-                          <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap inline-block font-medium">
+                        {/* END - TÀI SẢN */}
+
+                        {/* DANH MỤC - 15% */}
+                        <TableCell className="text-center px-4 py-4 w-[15%] align-top">
+                          <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs inline-block font-medium">
                             {categories.find((c) => c.id === item.danh_muc_tai_san_id)
                               ?.ten || "N/A"}
                           </span>
                         </TableCell>
-                        {/* Sửa đổi quan trọng ở đây: Cố định chiều cao và thêm cuộn */}
+
+                        {/* THÔNG TIN - 30% (Thu hẹp lại) */}
                         <TableCell className="text-left align-top px-4 py-2 w-[30%]">
                           <div className="space-y-1 p-2 bg-gray-50 rounded text-sm max-h-20 overflow-y-auto border border-gray-200">
                             <ul className="list-disc ml-4 space-y-0.5">
@@ -538,18 +554,22 @@ export default function AssetManager() {
                               )}
                           </div>
                         </TableCell>
-                        {/* End Sửa đổi */}
 
-                        <TableCell className="text-center px-4 py-4 w-[15%] align-top">
+                        {/* NGÀY ĐĂNG KÝ - 10% */}
+                        <TableCell className="text-center px-4 py-4 w-[10%] align-top">
                           <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap inline-block">
                             {item?.ngay_dang_ky || "N/A"}
                           </span>
                         </TableCell>
-                        <TableCell className="text-center px-4 py-4 w-[15%] align-top">
+
+                        {/* NGÀY HẾT HẠN - 10% */}
+                        <TableCell className="text-center px-4 py-4 w-[10%] align-top">
                           <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap inline-block">
                             {item?.ngay_het_han || "N/A"}
                           </span>
                         </TableCell>
+
+                        {/* THAO TÁC - 10% */}
                         <TableCell className="text-center px-4 py-4 w-[10%] align-top">
                           <div className="flex justify-center items-center gap-1">
                             <Button

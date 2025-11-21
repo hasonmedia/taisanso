@@ -3,13 +3,12 @@ const nodemailer = require("nodemailer");
 const sendMail = async (options) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMPT_HOST,
-    port: parseInt(process.env.SMPT_PORT),
-    service: process.env.SMPT_SERVICE,
+    port: parseInt(process.env.SMPT_PORT) || 587,
     auth: {
       user: process.env.SMPT_MAIL,
       pass: process.env.SMPT_PASSWORD,
     },
-    secure: process.env.SMPT_PORT == 465, // true for 465, false for other ports
+    secure: false,
   });
   const expiry = new Date(options.expiryDate).toLocaleString("vi-VN", {
     timeZone: "Asia/Ho_Chi_Minh",
@@ -20,6 +19,7 @@ const sendMail = async (options) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+
   let data_html = "";
   if (options.email_nv) {
     data_html = `
@@ -64,7 +64,6 @@ const sendMail = async (options) => {
             </div>
         `;
   } else if (options.email_ql) {
-    console.log("ql ", options.email_ql);
     data_html = options.html;
   } else if (options.email_forgot) {
     data_html = `
@@ -82,25 +81,7 @@ const sendMail = async (options) => {
             </div>
         `;
   } else {
-    data_html = `
-            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                <h2 style="color: #d9534f;">⚠️ Thông báo hết hạn tài sản</h2>
-                <p>Xin chào <b>${options.name}</b>,</p>
-                <p>Tài sản <b style="color: #007bff;">${options.ten_tai_san}</b> 
-                từ nhà cung cấp <b>${options.ten_nha_cung_cap}</b> 
-                sẽ <b style="color: red;">hết hạn sau ${options.so_ngay_con_lai} ngày</b>.</p>
-                
-                <p><b>Ngày hết hạn:</b> ${expiry}</p>
-
-                <p style="margin-top: 15px;">Vui lòng kiểm tra và gia hạn nếu cần thiết để tránh gián đoạn sử dụng.</p>
-                
-                <p style="margin-top: 20px;">Trân trọng,<br/>Phòng Quản lý tài sản</p>
-                <hr/>
-                <p style="font-size: 12px; color: #666;">
-                    Đây là email tự động, vui lòng không trả lời.
-                </p>
-            </div>
-        `;
+    data_html = options.html;
   }
   let subject = "Thông báo hết hạn tài sản số";
   if (options.email_forgot) {
@@ -114,7 +95,24 @@ const sendMail = async (options) => {
     html: data_html,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    console.log("Attempting to send email to:", options.email);
+    console.log("SMTP Config:", {
+      host: process.env.SMPT_HOST,
+      port: parseInt(process.env.SMPT_PORT) || 587,
+      service: process.env.SMPT_SERVICE,
+      secure:
+        process.env.SMPT_SECURE === "true" ||
+        parseInt(process.env.SMPT_PORT) === 465,
+    });
+
+    const result = await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully:", result.messageId);
+    return result;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error(`Không thể gửi email: ${error.message}`);
+  }
 };
 
 module.exports = sendMail;

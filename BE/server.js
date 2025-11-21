@@ -14,7 +14,7 @@ const swaggerDocs = require("./config/swagger");
 const app = express();
 const workosConfig = require("./config/ssoConfig");
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  origin: process.env.FRONTEND_URL || "http://localhost:3001",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
 };
@@ -30,14 +30,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/sso", ssoRoutes);
 // Cron jobs
 const setupCronJobs = () => {
-  cron.schedule("0 8 * * *", async () => {
-    try {
-      const res2 = await axios.get("/api/admin/gui-mail-tai-san-het-han");
-    } catch (err) {
-      console.error("❌ Lỗi gửi mail tài sản hết hạn:", err.message);
-    }
-  });
-
   cron.schedule("30 8 * * *", async () => {
     try {
       const res = await axios.get("/api/admin/gui-mail");
@@ -47,15 +39,20 @@ const setupCronJobs = () => {
     }
   });
 
-  cron.schedule("0 */4 * * *", async () => {
+  cron.schedule("19 11 * * *", async () => {
     try {
-      const urgentCheck = await axios.get("/api/admin/tai_san_sap_het_han");
+      const urgentCheck = await axios.get(
+        "https://taisanso.tmedu.vn/api/admin/tai_san_sap_het_han"
+      );
       const urgentAssets =
         urgentCheck.data.critical?.assets?.filter(
           (asset) => asset.so_ngay_con_lai <= 1
         ) || [];
+      console.log("🚨 Tài sản cần thông báo khẩn cấp:", urgentAssets);
       if (urgentAssets.length > 0) {
-        const res = await axios.get("/api/admin/gui-mail-tai-san-het-han");
+        const res = await axios.get(
+          "https://taisanso.tmedu.vn/api/admin/gui-mail-tai-san-het-han"
+        );
         console.log(
           `🚨 Gửi mail khẩn cấp cho ${urgentAssets.length} tài sản:`,
           res.data
@@ -85,8 +82,8 @@ const startServer = async () => {
 
     setupCronJobs();
 
-    app.listen(3000, () => {
-      console.log("Server running on port 3000");
+    app.listen(3001, () => {
+      console.log("Server running on port 3001");
     });
   } catch (err) {
     console.error("❌ Failed to start server:", err);
